@@ -68,7 +68,7 @@
                 )
             }
         } else {
-            alert('Maaf, Tidak ditemukan list pekerjaan yg akan di hitung..');
+            alert('Maaf, Tidak ditemukan list daftar pekerjaan yg akan di hitung..');
         }
     });
     //AKHIR --------------------------------------------------------------------------------
