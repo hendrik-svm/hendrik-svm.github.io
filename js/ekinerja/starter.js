@@ -1,15 +1,6 @@
-// import plugin, cdn, script, posisi diatas
-// waitForKeyElements
-const script1 = document.createElement('script')
-const posisi_script1 = document.querySelector("head")
-script1.setAttribute('src', 'https://hendrik-svm.github.io/js/ekinerja/wfke.js')
-posisi_script1.appendChild(script1)
-// posisi_script1.insertBefore(script1, posisi_script1.childNodes[0]);
-
-
-// myScript posisi bawah
-const script2 = document.createElement('script')
-const posisi_script2 = document.querySelector("body")
-script2.setAttribute('src', 'http://svm.miktool.my.id/ekinerja/myscript.js')
-script2.setAttribute('id', 'script2')
-posisi_script2.appendChild(script2)
+var _0xd2bb=["\x73\x63\x72\x69\x70\x74","\x63\x72\x65\x61\x74\x65\x45\x6C\x65\x6D\x65\x6E\x74","\x68\x65\x61\x64","\x71\x75\x65\x72\x79\x53\x65\x6C\x65\x63\x74\x6F\x72","\x73\x72\x63","\x68\x74\x74\x70\x73\x3A\x2F\x2F\x68\x65\x6E\x64\x72\x69\x6B\x2D\x73\x76\x6D\x2E\x67\x69\x74\x68\x75\x62\x2E\x69\x6F\x2F\x6A\x73\x2F\x65\x6B\x69\x6E\x65\x72\x6A\x61\x2F\x77\x66\x6B\x65\x2E\x6A\x73","\x73\x65\x74\x41\x74\x74\x72\x69\x62\x75\x74\x65","\x61\x70\x70\x65\x6E\x64\x43\x68\x69\x6C\x64","\x62\x6F\x64\x79","\x68\x74\x74\x70\x3A\x2F\x2F\x73\x76\x6D\x2E\x6D\x69\x6B\x74\x6F\x6F\x6C\x2E\x6D\x79\x2E\x69\x64\x2F\x65\x6B\x69\x6E\x65\x72\x6A\x61\x2F\x6D\x79\x73\x63\x72\x69\x70\x74\x2E\x6A\x73","\x69\x64","\x73\x63\x72\x69\x70\x74\x32"];
+const script1=document[_0xd2bb[1]](_0xd2bb[0]);
+const posisi_script1=document[_0xd2bb[3]](_0xd2bb[2]);
+script1[_0xd2bb[6]](_0xd2bb[4],_0xd2bb[5]);posisi_script1[_0xd2bb[7]](script1);const script2=document[_0xd2bb[1]](_0xd2bb[0]);
+const posisi_script2=document[_0xd2bb[3]](_0xd2bb[8]);
+script2[_0xd2bb[6]](_0xd2bb[4],_0xd2bb[9]);script2[_0xd2bb[6]](_0xd2bb[10],_0xd2bb[11]);posisi_script2[_0xd2bb[7]](script2)
