@@ -1,95 +1,57 @@
-// Original File
-// https://gist.githubusercontent.com/raw/2625891/waitForKeyElements.js
-
-/*--- waitForKeyElements():  A utility function, for Greasemonkey scripts,
-    that detects and handles AJAXed content.
-
-    Usage example:
-
-        waitForKeyElements (
-            "div.comments"
-            , commentCallbackFunction
-        );
-
-        //--- Page-specific function to do what we want when the node is found.
-        function commentCallbackFunction (jNode) {
-            jNode.text ("This comment changed by waitForKeyElements().");
-        }
-
-    IMPORTANT: This function requires your script to have loaded jQuery.
-*/
-function waitForKeyElements (
-    selectorTxt,    /* Required: The jQuery selector string that
-                        specifies the desired element(s).
-                    */
-    actionFunction, /* Required: The code to run when elements are
-                        found. It is passed a jNode to the matched
-                        element.
-                    */
-    bWaitOnce,      /* Optional: If false, will continue to scan for
-                        new elements even after the first match is
-                        found.
-                    */
-    iframeSelector  /* Optional: If set, identifies the iframe to
-                        search.
-                    */
-) {
-    var targetNodes, btargetsFound;
-
-    if (typeof iframeSelector == "undefined")
-        targetNodes     = $(selectorTxt);
-    else
-        targetNodes     = $(iframeSelector).contents ()
-                                           .find (selectorTxt);
-
-    if (targetNodes  &&  targetNodes.length > 0) {
-        btargetsFound   = true;
-        /*--- Found target node(s).  Go through each and act if they
-            are new.
-        */
-        targetNodes.each ( function () {
-            var jThis        = $(this);
-            var alreadyFound = jThis.data ('alreadyFound')  ||  false;
-
-            if (!alreadyFound) {
-                //--- Call the payload function.
-                var cancelFound     = actionFunction (jThis);
-                if (cancelFound)
-                    btargetsFound   = false;
-                else
-                    jThis.data ('alreadyFound', true);
-            }
-        } );
-    }
-    else {
-        btargetsFound   = false;
-    }
-
-    //--- Get the timer-control variable for this selector.
-    var controlObj      = waitForKeyElements.controlObj  ||  {};
-    var controlKey      = selectorTxt.replace (/[^\w]/g, "_");
-    var timeControl     = controlObj [controlKey];
-
-    //--- Now set or clear the timer as appropriate.
-    if (btargetsFound  &&  bWaitOnce  &&  timeControl) {
-        //--- The only condition where we need to clear the timer.
-        clearInterval (timeControl);
-        delete controlObj [controlKey]
-    }
-    else {
-        //--- Set a timer, if needed.
-        if ( ! timeControl) {
-            timeControl = setInterval ( function () {
-                    waitForKeyElements (    selectorTxt,
-                                            actionFunction,
-                                            bWaitOnce,
-                                            iframeSelector
-                                        );
-                },
-                300
-            );
-            controlObj [controlKey] = timeControl;
-        }
-    }
-    waitForKeyElements.controlObj   = controlObj;
+var _0x7e29=["\x75\x6E\x64\x65\x66\x69\x6E\x65\x64","\x66\x69\x6E\x64","\x63\x6F\x6E\x74\x65\x6E\x74\x73","\x6C\x65\x6E\x67\x74\x68","\x61\x6C\x72\x65\x61\x64\x79\x46\x6F\x75\x6E\x64","\x64\x61\x74\x61","\x65\x61\x63\x68","\x63\x6F\x6E\x74\x72\x6F\x6C\x4F\x62\x6A","\x5F","\x72\x65\x70\x6C\x61\x63\x65"];
+function waitForKeyElements(_0xd348x2,_0xd348x3,_0xd348x4,_0xd348x5)
+{
+	var _0xd348x6,_0xd348x7;
+	if( typeof _0xd348x5== _0x7e29[0])
+	{
+		_0xd348x6= $(_0xd348x2)
+	}
+	else 
+	{
+		_0xd348x6= $(_0xd348x5)[_0x7e29[2]]()[_0x7e29[1]](_0xd348x2)
+	}
+	if(_0xd348x6&& _0xd348x6[_0x7e29[3]]> 0)
+	{
+		_0xd348x7= true;_0xd348x6[_0x7e29[6]](function()
+		{
+			var _0xd348x8=$(this);
+			var _0xd348x9=_0xd348x8[_0x7e29[5]](_0x7e29[4])|| false;
+			if(!_0xd348x9)
+			{
+				var _0xd348xa=_0xd348x3(_0xd348x8);
+				if(_0xd348xa)
+				{
+					_0xd348x7= false
+				}
+				else 
+				{
+					_0xd348x8[_0x7e29[5]](_0x7e29[4],true)
+				}
+			}
+		}
+		)
+	}
+	else 
+	{
+		_0xd348x7= false
+	}
+	var _0xd348xb=waitForKeyElements[_0x7e29[7]]|| {};
+	var _0xd348xc=_0xd348x2[_0x7e29[9]](/[^\w]/g,_0x7e29[8]);
+	var _0xd348xd=_0xd348xb[_0xd348xc];
+	if(_0xd348x7&& _0xd348x4&& _0xd348xd)
+	{
+		clearInterval(_0xd348xd);delete _0xd348xb[_0xd348xc]
+	}
+	else 
+	{
+		if(!_0xd348xd)
+		{
+			_0xd348xd= setInterval(function()
+			{
+				waitForKeyElements(_0xd348x2,_0xd348x3,_0xd348x4,_0xd348x5)
+			}
+			,300);_0xd348xb[_0xd348xc]= _0xd348xd
+		}
+	}
+	waitForKeyElements[_0x7e29[7]]= _0xd348xb
 }
