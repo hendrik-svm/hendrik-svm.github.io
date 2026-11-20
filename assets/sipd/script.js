@@ -2,7 +2,7 @@ var e = "sipd_data_tgl1",
   t = "sipd_data_tgl2",
   n = "sipd_tgl1_date",
   i = "sipd_tgl2_date",
-  a = 800,
+  a = 1600,
   o = !1,
   r = null,
   d = !1,
@@ -90,7 +90,7 @@ function f(e) {
     ? new Date(parseInt(r[3]), t[r[2].toLowerCase()], parseInt(r[1]))
     : null;
 }
-function b(e) {
+function m(e) {
   var t = f(e);
   return t
     ? ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"][
@@ -118,12 +118,12 @@ function b(e) {
         ")"
     : e;
 }
-function m(e) {
+function b(e) {
   var t = String(e).split(".");
   return 6 === t.length && "5" === t[0];
 }
 function x(e) {
-  if (m(e)) return 5;
+  if (b(e)) return 5;
   var t = String(e).split(".").length;
   return 8 === t ? 0 : t <= 2 ? 1 : 3 === t ? 2 : 5 === t ? 3 : 4;
 }
@@ -143,13 +143,60 @@ function y(e) {
   var t = e.querySelector(".text-sm.text-slate-800, .text-sm.text-slate-300"),
     n = e.querySelector(".txt-font-12");
   return (
+    "L" +
+    (function (e) {
+      if (e.querySelector(".dm-tree__root")) return 0;
+      var t = e.querySelector(".col-span-5 > [class*='css-no-3jf-3-acge']");
+      if (!t) return -1;
+      var n = t.className.match(/css-no-3jf-3-acge(-ce\d*)?/);
+      return n
+        ? void 0 === n[1]
+          ? 1
+          : "-ce" === n[1]
+            ? 2
+            : parseInt(n[1].replace("-ce", ""), 10) + 1
+        : -1;
+    })(e) +
+    "||" +
     (t ? t.innerText.trim() : "NoName") +
     "||" +
     (n ? n.innerText.trim() : "NoCode")
   );
 }
-function v(p) {
-  if (o) k("Info", "Sedang memproses, tunggu selesai.", "OK");
+function v(e) {
+  var t = e.parentElement;
+  if (!t) return !1;
+  for (var n = 0; n < t.children.length; n++) {
+    var i = t.children[n];
+    if (
+      i !== e &&
+      i.classList &&
+      (i.classList.contains("mb-0") || i.classList.contains("mt-0"))
+    )
+      return !0;
+  }
+  return !1;
+}
+function w(e, t) {
+  var n = Date.now(),
+    i = t || 15e3;
+  !(function t() {
+    var a = document.querySelectorAll(
+        ".cursor-pointer.grid.grid-cols-12.items-center",
+      ),
+      o = document.querySelector(".dm-tree__head");
+    if (!(a.length > 0 && o))
+      return Date.now() - n > i
+        ? (console.warn("waitForTableReady timeout setelah " + i + "ms"),
+          void (e && e()))
+        : void setTimeout(t, 300);
+    setTimeout(function () {
+      e && e();
+    }, 500);
+  })();
+}
+function k(p) {
+  if (o) _("Info", "Sedang memproses, tunggu selesai.", "OK");
   else if (g()) {
     var u,
       x =
@@ -197,7 +244,7 @@ function v(p) {
                 }));
             })(
               "Tanggal yang dipilih (" +
-                b(e) +
+                m(e) +
                 ") tidak sesuai dengan tahun login SIPD (" +
                 i +
                 ").<br><br>Silakan pilih tanggal yang sesuai dengan tahun " +
@@ -216,12 +263,12 @@ function v(p) {
               var r = f(o);
               if (r && a >= r)
                 return (
-                  k(
+                  _(
                     "Validasi Tanggal",
                     "Tanggal Awal " +
-                      b(t) +
+                      m(t) +
                       " harus lebih kecil dari Tanggal Akhir " +
-                      b(o) +
+                      m(o) +
                       ".",
                     "OK",
                   ),
@@ -234,12 +281,12 @@ function v(p) {
               var s = f(d);
               if (s && s >= a)
                 return (
-                  k(
+                  _(
                     "Validasi Tanggal",
                     "Tanggal Akhir " +
-                      b(t) +
+                      m(t) +
                       " harus lebih besar dari Tanggal Awal " +
-                      b(d) +
+                      m(d) +
                       ".",
                     "OK",
                   ),
@@ -251,8 +298,8 @@ function v(p) {
         })(p, x)
       ) {
         var h = "A" === p ? "Awal" : "Akhir";
-        E(
-          "Yakin ingin ambil data Tanggal " + h + " " + b(x) + "?",
+        I(
+          "Yakin ingin ambil data Tanggal " + h + " " + m(x) + "?",
           function () {
             !(function (e) {
               var t = document.querySelector(
@@ -268,7 +315,7 @@ function v(p) {
                       console.log(
                         "UI dipaksa refresh dengan simulasi navigasi bolak-balik.",
                       ),
-                      e && e());
+                      w(e));
                   }, 800));
               else {
                 var i = document.querySelector(".dm-seg__btn.is-on");
@@ -276,14 +323,13 @@ function v(p) {
                   console.log(
                     "UI dipaksa refresh dengan klik ulang tab aktif.",
                   ),
-                  e && e());
+                  w(e));
               }
             })(function () {
-              var u;
               ((o = !0),
                 (d = !1),
                 (r = p),
-                S("Scan " + h + "..."),
+                z("Scan " + h + "..."),
                 (function (e) {
                   var t = document.getElementById("sipd-loading-modal");
                   if (
@@ -297,7 +343,7 @@ function v(p) {
                       document.head.appendChild(n));
                   }
                   var i = "A" === r ? "Awal" : "Akhir",
-                    a = b(e),
+                    a = m(e),
                     o = document.createElement("div");
                   ((o.id = "sipd-loading-modal"),
                     (o.style.cssText =
@@ -315,376 +361,316 @@ function v(p) {
                         d = !0;
                       }));
                 })(x),
-                (u = function () {
-                  var r;
-                  ((s = []),
-                    window._sipdOrigXhrOpen ||
-                      ((window._sipdOrigXhrOpen =
-                        XMLHttpRequest.prototype.open),
-                      (window._sipdOrigXhrSend = XMLHttpRequest.prototype.send),
-                      (XMLHttpRequest.prototype.open = function (e, t) {
-                        return (
-                          (this._sipdUrl = t),
-                          (this._sipdMethod = e),
-                          window._sipdOrigXhrOpen.apply(this, arguments)
-                        );
+                (s = []),
+                window._sipdOrigXhrOpen ||
+                  ((window._sipdOrigXhrOpen = XMLHttpRequest.prototype.open),
+                  (window._sipdOrigXhrSend = XMLHttpRequest.prototype.send),
+                  (XMLHttpRequest.prototype.open = function (e, t) {
+                    return (
+                      (this._sipdUrl = t),
+                      (this._sipdMethod = e),
+                      window._sipdOrigXhrOpen.apply(this, arguments)
+                    );
+                  }),
+                  (XMLHttpRequest.prototype.send = function (e) {
+                    if (!this._sipdUrl)
+                      return window._sipdOrigXhrSend.apply(this, arguments);
+                    var t = this;
+                    return (
+                      this.addEventListener("load", function () {
+                        try {
+                          if (
+                            -1 ===
+                            (t.getResponseHeader("content-type") || "").indexOf(
+                              "json",
+                            )
+                          )
+                            return;
+                          var e;
+                          if (
+                            !(e =
+                              "json" === t.responseType || "" === t.responseType
+                                ? t.responseText ||
+                                  (t.response ? JSON.stringify(t.response) : "")
+                                : t.responseText || "")
+                          )
+                            return;
+                          var n = JSON.parse(e);
+                          Array.isArray(n) &&
+                            n.length > 0 &&
+                            void 0 !== n[0].id_skpd &&
+                            s.push(n);
+                        } catch (e) {}
                       }),
-                      (XMLHttpRequest.prototype.send = function (e) {
-                        if (!this._sipdUrl)
-                          return window._sipdOrigXhrSend.apply(this, arguments);
-                        var t = this;
+                      window._sipdOrigXhrSend.apply(this, arguments)
+                    );
+                  })),
+                window._sipdOrigFetch ||
+                  ((window._sipdOrigFetch = window.fetch),
+                  (window.fetch = function (e, t) {
+                    return window._sipdOrigFetch
+                      .apply(this, arguments)
+                      .then(function (e) {
                         return (
-                          this.addEventListener("load", function () {
-                            try {
-                              if (
-                                -1 ===
-                                (
-                                  t.getResponseHeader("content-type") || ""
-                                ).indexOf("json")
-                              )
-                                return;
-                              var e;
-                              if (
-                                !(e =
-                                  "json" === t.responseType ||
-                                  "" === t.responseType
-                                    ? t.responseText ||
-                                      (t.response
-                                        ? JSON.stringify(t.response)
-                                        : "")
-                                    : t.responseText || "")
-                              )
-                                return;
-                              var n = JSON.parse(e);
-                              Array.isArray(n) &&
-                                n.length > 0 &&
-                                void 0 !== n[0].id_skpd &&
-                                s.push(n);
-                            } catch (e) {}
-                          }),
-                          window._sipdOrigXhrSend.apply(this, arguments)
+                          (e.headers.get("content-type") || "").indexOf(
+                            "json",
+                          ) > -1 &&
+                            e
+                              .clone()
+                              .text()
+                              .then(function (e) {
+                                try {
+                                  var t = JSON.parse(e);
+                                  Array.isArray(t) &&
+                                    t.length > 0 &&
+                                    void 0 !== t[0].id_skpd &&
+                                    s.push(t);
+                                } catch (e) {}
+                              }),
+                          e
                         );
-                      })),
-                    window._sipdOrigFetch ||
-                      ((window._sipdOrigFetch = window.fetch),
-                      (window.fetch = function (e, t) {
-                        return window._sipdOrigFetch
-                          .apply(this, arguments)
-                          .then(function (e) {
-                            return (
-                              (e.headers.get("content-type") || "").indexOf(
-                                "json",
-                              ) > -1 &&
-                                e
-                                  .clone()
-                                  .text()
-                                  .then(function (e) {
-                                    try {
-                                      var t = JSON.parse(e);
-                                      Array.isArray(t) &&
-                                        t.length > 0 &&
-                                        void 0 !== t[0].id_skpd &&
-                                        s.push(t);
-                                    } catch (e) {}
-                                  }),
-                              e
-                            );
-                          });
-                      })),
-                    (r = function () {
-                      !(function (e) {
-                        var t = new Set(),
-                          n = !1;
-                        function i() {
-                          n || ((n = !0), e && e());
+                      });
+                  })),
+                (function (e) {
+                  var t = new Set(),
+                    n = !1;
+                  function i() {
+                    n || ((n = !0), e && e());
+                  }
+                  !(function e() {
+                    if (d) i();
+                    else {
+                      for (
+                        var n = document.querySelectorAll(
+                            ".cursor-pointer.grid.grid-cols-12.items-center",
+                          ),
+                          o = null,
+                          r = "",
+                          s = 0;
+                        s < n.length;
+                        s++
+                      ) {
+                        var l = y(n[s]);
+                        if (!t.has(l)) {
+                          if (!v(n[s])) {
+                            ((o = n[s]), (r = l));
+                            break;
+                          }
+                          t.add(l);
                         }
-                        !(function e() {
+                      }
+                      if (o) {
+                        var p = o.querySelector(".txt-font-12"),
+                          c = b(
+                            (p ? p.innerText.trim() : "").replace(
+                              /^[^\d]*/,
+                              "",
+                            ),
+                          );
+                        (t.add(r),
+                          o.scrollIntoView({
+                            behavior: "instant",
+                            block: "center",
+                          }),
+                          o.click(),
+                          c
+                            ? setTimeout(function () {
+                                d ? i() : setTimeout(e, 10);
+                              }, 10)
+                            : setTimeout(e, a));
+                      } else
+                        setTimeout(function () {
                           if (d) i();
                           else {
                             for (
                               var n = document.querySelectorAll(
-                                  ".cursor-pointer.grid.grid-cols-12",
+                                  ".cursor-pointer.grid.grid-cols-12.items-center",
                                 ),
-                                o = null,
-                                r = "",
-                                s = 0;
-                              s < n.length;
-                              s++
-                            ) {
-                              var l = y(n[s]);
-                              if (!t.has(l)) {
-                                ((o = n[s]), (r = l));
+                                o = !1,
+                                r = 0;
+                              r < n.length;
+                              r++
+                            )
+                              if (!t.has(y(n[r]))) {
+                                o = !0;
                                 break;
                               }
-                            }
-                            if (o) {
-                              var p,
-                                c = o.querySelector(".txt-font-12"),
-                                u = m(
-                                  (c ? c.innerText.trim() : "").replace(
-                                    /^[^\d]*/,
-                                    "",
-                                  ),
-                                ),
-                                g =
-                                  document.querySelectorAll(
-                                    ".grid.grid-cols-12",
-                                  ).length;
-                              if (
-                                (p = o.querySelector(
-                                  "button.dm-skpd__toggle",
-                                )) &&
-                                "true" === p.getAttribute("aria-expanded")
-                              )
-                                return (t.add(r), void setTimeout(e, 10));
-                              (t.add(r),
-                                o.scrollIntoView({
-                                  behavior: "instant",
-                                  block: "center",
-                                }),
-                                o.dispatchEvent(
-                                  new MouseEvent("click", {
-                                    bubbles: !0,
-                                    cancelable: !0,
-                                    view: window,
-                                  }),
-                                ),
-                                u
-                                  ? setTimeout(function () {
-                                      d ? i() : setTimeout(e, 10);
-                                    }, 10)
-                                  : setTimeout(function () {
-                                      d
-                                        ? i()
-                                        : document.querySelectorAll(
-                                              ".grid.grid-cols-12",
-                                            ).length < g
-                                          ? (o.dispatchEvent(
-                                              new MouseEvent("click", {
-                                                bubbles: !0,
-                                                cancelable: !0,
-                                                view: window,
-                                              }),
-                                            ),
-                                            setTimeout(e, a))
-                                          : setTimeout(e, a);
-                                    }, 800));
-                            } else
-                              setTimeout(function () {
+                            if (o) setTimeout(e, a);
+                            else {
+                              z("Final check...");
+                              var s = 0;
+                              function l() {
                                 if (d) i();
                                 else {
                                   for (
                                     var n = document.querySelectorAll(
-                                        ".cursor-pointer.grid.grid-cols-12",
+                                        ".cursor-pointer.grid.grid-cols-12.items-center",
                                       ),
-                                      o = !1,
-                                      r = 0;
-                                    r < n.length;
-                                    r++
+                                      o = 0;
+                                    o < n.length;
+                                    o++
                                   )
-                                    if (!t.has(y(n[r]))) {
-                                      o = !0;
-                                      break;
-                                    }
-                                  if (o) setTimeout(e, a);
-                                  else {
-                                    S("Final check...");
-                                    var s = 0;
-                                    function l() {
-                                      if (d) i();
-                                      else {
-                                        for (
-                                          var n = document.querySelectorAll(
-                                              ".cursor-pointer.grid.grid-cols-12",
-                                            ),
-                                            o = 0;
-                                          o < n.length;
-                                          o++
-                                        )
-                                          if (!t.has(y(n[o])))
-                                            return void setTimeout(e, a);
-                                        ++s < 17 ? setTimeout(l, 300) : i();
-                                      }
-                                    }
-                                    setTimeout(l, 0);
-                                  }
+                                    if (!t.has(y(n[o])))
+                                      return void setTimeout(e, a);
+                                  ++s < 17 ? setTimeout(l, 300) : i();
                                 }
-                              }, 10);
-                          }
-                        })();
-                      })(function () {
-                        if (d)
-                          return (l(), (o = !1), _(), void S("Dibatalkan"));
-                        l();
-                        var a = (function () {
-                          for (
-                            var e = {},
-                              t = {},
-                              n = {
-                                bidang: {},
-                                program: {},
-                                kegiatan: {},
-                                subGiat: {},
-                              },
-                              i = 0;
-                            i < s.length;
-                            i++
-                          )
-                            for (var a = s[i], o = 0; o < a.length; o++) {
-                              var r = a[o];
-                              if (void 0 !== r.id_akun) {
-                                var d = t[r.id_sub_giat] || "",
-                                  l = String(r.kode_akun || "").trim();
-                                if (!l) continue;
-                                var p = d ? d + "|" + l : l;
-                                e[p] = {
-                                  kode: p,
-                                  displayKode: l,
-                                  uraian: r.nama_akun || "",
-                                  anggaran: r.anggaran || 0,
-                                  realisasi: r.realisasi_rill || 0,
-                                };
-                              } else if (
-                                void 0 !== r.id_sub_giat &&
-                                r.kode_sub_giat
-                              ) {
-                                var u = c(
-                                  String(r.kode_sub_giat).trim(),
-                                  n.kegiatan[r.id_giat] ||
-                                    n.program[r.id_program],
-                                );
-                                ((n.subGiat[r.id_sub_giat] = u),
-                                  (t[r.id_sub_giat] = u),
-                                  (e[u] = {
-                                    kode: u,
-                                    displayKode: u,
-                                    uraian: r.nama_sub_giat || "",
-                                    anggaran: r.anggaran || 0,
-                                    realisasi: r.realisasi_rill || 0,
-                                  }));
-                              } else if (void 0 !== r.id_giat && r.kode_giat) {
-                                var g = c(
-                                  String(r.kode_giat).trim(),
-                                  n.program[r.id_program] || "",
-                                );
-                                ((n.kegiatan[r.id_giat] = g),
-                                  (e[g] = {
-                                    kode: g,
-                                    displayKode: g,
-                                    uraian: r.nama_giat || "",
-                                    anggaran: r.anggaran || 0,
-                                    realisasi: r.realisasi_rill || 0,
-                                  }));
-                              } else if (
-                                void 0 !== r.id_program &&
-                                r.kode_program
-                              ) {
-                                var f = c(
-                                  String(r.kode_program).trim(),
-                                  n.bidang[r.id_bidang_urusan] || "",
-                                );
-                                ((n.program[r.id_program] = f),
-                                  (e[f] = {
-                                    kode: f,
-                                    displayKode: f,
-                                    uraian: r.nama_program || "",
-                                    anggaran: r.anggaran || 0,
-                                    realisasi: r.realisasi_rill || 0,
-                                  }));
-                              } else if (
-                                void 0 !== r.id_bidang_urusan &&
-                                r.kode_bidang_urusan
-                              ) {
-                                var b = c(
-                                  String(r.kode_bidang_urusan).trim(),
-                                  n.bidang._skpd || "",
-                                );
-                                ((n.bidang[r.id_bidang_urusan] = b),
-                                  (e[b] = {
-                                    kode: b,
-                                    displayKode: b,
-                                    uraian: r.nama_bidang_urusan || "",
-                                    anggaran: r.anggaran || 0,
-                                    realisasi: r.realisasi_rill || 0,
-                                  }));
-                              } else if (void 0 !== r.id_skpd) {
-                                var m = String(r.kode_sub_skpd || "").trim();
-                                if (!m) continue;
-                                ((n.bidang._skpd = m),
-                                  e[m] ||
-                                    (e[m] = {
-                                      kode: m,
-                                      displayKode: m,
-                                      uraian: r.nama_sub_skpd || "",
-                                      anggaran: r.anggaran || 0,
-                                      realisasi: r.realisasi_rill || 0,
-                                    }));
                               }
+                              setTimeout(l, 0);
                             }
-                          return e;
-                        })();
-                        (!(function (a, o, r) {
-                          var d = "A" === a ? e : t,
-                            s = "A" === a ? n : i;
-                          (localStorage.setItem(d, JSON.stringify(o)),
-                            localStorage.setItem(s, r));
-                        })(p, a, x),
-                          (o = !1),
-                          _(),
-                          (function (e, t) {
-                            var n = document.getElementById("sipd-modal-s");
-                            n && n.remove();
-                            var i = "A" === e ? "Awal" : "Akhir",
-                              a = document.createElement("div");
-                            ((a.id = "sipd-modal-s"),
-                              (a.style.cssText =
-                                "position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:100000;display:flex;justify-content:center;align-items:flex-start;padding-top:80px;font-family:system-ui,sans-serif;"),
-                              (a.innerHTML =
-                                '<div style="background:white;border-radius:12px;box-shadow:0 20px 60px rgba(0,0,0,0.3);width:440px;max-width:90vw;"><div style="padding:24px;text-align:center;"><div style="font-size:40px;margin-bottom:12px;">&#x2705;</div><h3 style="margin:0 0 8px;font-size:16px;font-weight:700;color:#166534;">Sukses ambil data</h3><p style="margin:0 0 20px;font-size:14px;color:#374151;">Tanggal ' +
-                                i +
-                                " " +
-                                b(t) +
-                                '</p><button id="sipd-close-s-btn" style="padding:8px 24px;background:#3b82f6;color:white;border:none;border-radius:6px;font-weight:600;cursor:pointer;font-size:13px;">OK</button></div></div>'),
-                              document.body.appendChild(a),
-                              document
-                                .getElementById("sipd-close-s-btn")
-                                .addEventListener("click", function () {
-                                  a.remove();
-                                }),
-                              a.addEventListener("click", function (e) {
-                                e.target === a && a.remove();
+                          }
+                        }, 10);
+                    }
+                  })();
+                })(function () {
+                  if (d) return (l(), (o = !1), S(), void z("Dibatalkan"));
+                  l();
+                  var a = (function () {
+                    for (
+                      var e = {},
+                        t = {},
+                        n = {
+                          bidang: {},
+                          program: {},
+                          kegiatan: {},
+                          subGiat: {},
+                        },
+                        i = 0;
+                      i < s.length;
+                      i++
+                    )
+                      for (var a = s[i], o = 0; o < a.length; o++) {
+                        var r = a[o];
+                        if (void 0 !== r.id_akun) {
+                          var d = t[r.id_sub_giat] || "",
+                            l = String(r.kode_akun || "").trim();
+                          if (!l) continue;
+                          var p = d ? d + "|" + l : l;
+                          e[p] = {
+                            kode: p,
+                            displayKode: l,
+                            uraian: r.nama_akun || "",
+                            anggaran: r.anggaran || 0,
+                            realisasi: r.realisasi_rill || 0,
+                          };
+                        } else if (
+                          void 0 !== r.id_sub_giat &&
+                          r.kode_sub_giat
+                        ) {
+                          var u = c(
+                            String(r.kode_sub_giat).trim(),
+                            n.kegiatan[r.id_giat] || n.program[r.id_program],
+                          );
+                          ((n.subGiat[r.id_sub_giat] = u),
+                            (t[r.id_sub_giat] = u),
+                            (e[u] = {
+                              kode: u,
+                              displayKode: u,
+                              uraian: r.nama_sub_giat || "",
+                              anggaran: r.anggaran || 0,
+                              realisasi: r.realisasi_rill || 0,
+                            }));
+                        } else if (void 0 !== r.id_giat && r.kode_giat) {
+                          var g = c(
+                            String(r.kode_giat).trim(),
+                            n.program[r.id_program] || "",
+                          );
+                          ((n.kegiatan[r.id_giat] = g),
+                            (e[g] = {
+                              kode: g,
+                              displayKode: g,
+                              uraian: r.nama_giat || "",
+                              anggaran: r.anggaran || 0,
+                              realisasi: r.realisasi_rill || 0,
+                            }));
+                        } else if (void 0 !== r.id_program && r.kode_program) {
+                          var f = c(
+                            String(r.kode_program).trim(),
+                            n.bidang[r.id_bidang_urusan] || "",
+                          );
+                          ((n.program[r.id_program] = f),
+                            (e[f] = {
+                              kode: f,
+                              displayKode: f,
+                              uraian: r.nama_program || "",
+                              anggaran: r.anggaran || 0,
+                              realisasi: r.realisasi_rill || 0,
+                            }));
+                        } else if (
+                          void 0 !== r.id_bidang_urusan &&
+                          r.kode_bidang_urusan
+                        ) {
+                          var m = c(
+                            String(r.kode_bidang_urusan).trim(),
+                            n.bidang._skpd || "",
+                          );
+                          ((n.bidang[r.id_bidang_urusan] = m),
+                            (e[m] = {
+                              kode: m,
+                              displayKode: m,
+                              uraian: r.nama_bidang_urusan || "",
+                              anggaran: r.anggaran || 0,
+                              realisasi: r.realisasi_rill || 0,
+                            }));
+                        } else if (void 0 !== r.id_skpd) {
+                          var b = String(r.kode_sub_skpd || "").trim();
+                          if (!b) continue;
+                          ((n.bidang._skpd = b),
+                            e[b] ||
+                              (e[b] = {
+                                kode: b,
+                                displayKode: b,
+                                uraian: r.nama_sub_skpd || "",
+                                anggaran: r.anggaran || 0,
+                                realisasi: r.realisasi_rill || 0,
                               }));
-                          })(p, x),
-                          T(),
-                          z(),
-                          S(h + " selesai"));
-                      });
-                    }),
-                    (function e() {
-                      var t = document.querySelectorAll(
-                        'button.dm-skpd__toggle[aria-expanded="false"]',
-                      );
-                      0 !== t.length
-                        ? (t[0].click(), setTimeout(e, 600))
-                        : r && r();
-                    })());
-                }),
-                (function e() {
-                  var t = document.querySelectorAll(
-                    'button.dm-skpd__toggle[aria-expanded="true"]',
-                  );
-                  0 !== t.length
-                    ? (t[0].click(), setTimeout(e, 600))
-                    : u && u();
-                })());
+                        }
+                      }
+                    return e;
+                  })();
+                  (!(function (a, o, r) {
+                    var d = "A" === a ? e : t,
+                      s = "A" === a ? n : i;
+                    (localStorage.setItem(d, JSON.stringify(o)),
+                      localStorage.setItem(s, r));
+                  })(p, a, x),
+                    (o = !1),
+                    S(),
+                    (function (e, t) {
+                      var n = document.getElementById("sipd-modal-s");
+                      n && n.remove();
+                      var i = "A" === e ? "Awal" : "Akhir",
+                        a = document.createElement("div");
+                      ((a.id = "sipd-modal-s"),
+                        (a.style.cssText =
+                          "position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:100000;display:flex;justify-content:center;align-items:flex-start;padding-top:80px;font-family:system-ui,sans-serif;"),
+                        (a.innerHTML =
+                          '<div style="background:white;border-radius:12px;box-shadow:0 20px 60px rgba(0,0,0,0.3);width:440px;max-width:90vw;"><div style="padding:24px;text-align:center;"><div style="font-size:40px;margin-bottom:12px;">&#x2705;</div><h3 style="margin:0 0 8px;font-size:16px;font-weight:700;color:#166534;">Sukses ambil data</h3><p style="margin:0 0 20px;font-size:14px;color:#374151;">Tanggal ' +
+                          i +
+                          " " +
+                          m(t) +
+                          '</p><button id="sipd-close-s-btn" style="padding:8px 24px;background:#3b82f6;color:white;border:none;border-radius:6px;font-weight:600;cursor:pointer;font-size:13px;">OK</button></div></div>'),
+                        document.body.appendChild(a),
+                        document
+                          .getElementById("sipd-close-s-btn")
+                          .addEventListener("click", function () {
+                            a.remove();
+                          }),
+                        a.addEventListener("click", function (e) {
+                          e.target === a && a.remove();
+                        }));
+                    })(p, x),
+                    L(),
+                    B(),
+                    z(h + " selesai"));
+                }));
             });
           },
         );
       }
-    } else k("Info", "Pilih tanggal terlebih dahulu.", "OK");
-  } else k("Info", "Buka halaman Dashboard terlebih dahulu.", "OK");
+    } else _("Info", "Pilih tanggal terlebih dahulu.", "OK");
+  } else _("Info", "Buka halaman Dashboard terlebih dahulu.", "OK");
 }
-function w() {
+function E() {
   var a = JSON.parse(localStorage.getItem(e) || "null"),
     o = JSON.parse(localStorage.getItem(t) || "null"),
     r = localStorage.getItem(n) || "Awal",
@@ -704,16 +690,16 @@ function w() {
         y = a[g] || { realisasi: 0 },
         v = y.realisasi || 0,
         w = h.realisasi || 0,
-        E = h.anggaran || y.anggaran || 0,
-        _ = h.uraian || y.uraian || "",
+        k = h.anggaran || y.anggaran || 0,
+        E = h.uraian || y.uraian || "",
         I = w - v,
-        S = 0 === E ? 0 : (I / E) * 100,
-        T = 0 === E ? 0 : (w / E) * 100;
+        S = 0 === k ? 0 : (I / k) * 100,
+        T = 0 === k ? 0 : (w / k) * 100;
       s.push({
         kode: g,
         displayKode: h.displayKode || g.split("|").pop() || g,
-        uraian: _,
-        anggaran: E,
+        uraian: E,
+        anggaran: k,
         realTgl1: v,
         realTgl2: w,
         selisih: I,
@@ -744,7 +730,7 @@ function w() {
         for (var r = "", d = 0; d < e.length; d++) {
           var s = e[d],
             l = s.displayKode || s.kode,
-            c = m(l),
+            c = b(l),
             u = Math.round(s.selisih),
             g = x(l),
             h = 20 * g,
@@ -816,9 +802,9 @@ function w() {
             '</span><span style="font-size:13px;color:#6b7280;margin-left:12px;">' +
             e.length +
             ' item</span></div><div style="display:flex;gap:8px;"><button id="sipd-export-btn" style="padding:8px 16px;background:#059669;color:white;border:none;border-radius:6px;font-weight:600;cursor:pointer;font-size:13px;">Export Excel</button><button id="sipd-close-c-btn" style="padding:8px 16px;background:#6b7280;color:white;border:none;border-radius:6px;font-weight:600;cursor:pointer;font-size:13px;">Tutup</button></div></div><div style="overflow-x:auto;overflow-y:auto;flex:1;" class="sipd-table-wrapper"><table style="width:100%;border-collapse:collapse;min-width:900px;"><thead><tr style="position:sticky;top:0;background:#f3f4f6;"><th style="padding:8px;font-size:11px;font-weight:700;color:#374151;text-align:left;">Kode</th><th style="padding:8px;font-size:11px;font-weight:700;color:#374151;text-align:left;">Uraian</th><th style="padding:8px;font-size:11px;font-weight:700;color:#374151;text-align:right;white-space:nowrap;">Anggaran</th><th style="padding:8px;font-size:11px;font-weight:700;color:#374151;text-align:right;white-space:nowrap;">Realisasi<br><span style="font-weight:400;font-size:10px;white-space:nowrap;">' +
-            b(t) +
+            m(t) +
             '</span></th><th style="padding:8px;font-size:11px;font-weight:700;color:#374151;text-align:right;white-space:nowrap;">Realisasi<br><span style="font-weight:400;font-size:10px;white-space:nowrap;">' +
-            b(n) +
+            m(n) +
             '</span></th><th style="padding:8px;font-size:11px;font-weight:700;color:#374151;text-align:right;white-space:nowrap;">Selisih</th><th style="padding:8px;font-size:11px;font-weight:700;color:#374151;text-align:right;white-space:nowrap;">% Tambah</th><th style="padding:8px;font-size:11px;font-weight:700;color:#374151;text-align:right;white-space:nowrap;">% Total</th></tr></thead><tbody>' +
             r +
             '</tbody></table></div><div style="padding:10px 20px;border-top:1px solid #e5e7eb;font-size:11px;color:#9ca3af;text-align:center;">* &#x1f4cb; Baris biru muda = klik nilai Selisih untuk copy (contoh: Rp81.142.319 => 81142319). % Tambah = selisih dibagi anggaran x 100 | % Total = realisasi akhir dibagi anggaran x 100</div></div>'),
@@ -940,9 +926,9 @@ function w() {
             document.head.appendChild(I));
         }
       })(s, r, d));
-  } else k("Error", "Ambil data Tanggal Awal dan Akhir terlebih dahulu.", "OK");
+  } else _("Error", "Ambil data Tanggal Awal dan Akhir terlebih dahulu.", "OK");
 }
-function k(e, t, n) {
+function _(e, t, n) {
   var i = document.getElementById("sipd-modal-s");
   i && i.remove();
   var a = document.createElement("div");
@@ -967,7 +953,7 @@ function k(e, t, n) {
       e.target === a && a.remove();
     }));
 }
-function E(e, t, n) {
+function I(e, t, n) {
   var i = document.getElementById("sipd-modal-cf");
   i && i.remove();
   var a = document.createElement("div");
@@ -993,18 +979,18 @@ function E(e, t, n) {
       e.target === a && (a.remove(), n && n());
     }));
 }
-function _() {
+function S() {
   var e = document.getElementById("sipd-loading-modal");
   e && e.remove();
 }
-function I() {
-  E("Yakin ingin menghapus semua data (tanggal awal dan akhir)?", function () {
+function T() {
+  I("Yakin ingin menghapus semua data (tanggal awal dan akhir)?", function () {
     (localStorage.removeItem(e),
       localStorage.removeItem(t),
       localStorage.removeItem(n),
       localStorage.removeItem(i),
-      T(),
-      z(),
+      L(),
+      B(),
       (function () {
         var e = document.getElementById("sipd-modal-s");
         e && e.remove();
@@ -1026,18 +1012,18 @@ function I() {
       })());
   });
 }
-function S(e) {
+function z(e) {
   var t = document.getElementById("sipd-status");
   t && (t.textContent = e);
 }
-function T() {
+function L() {
   var e = localStorage.getItem(n) || "-",
     t = localStorage.getItem(i) || "-",
     a = document.getElementById("sipd-lbl1"),
     o = document.getElementById("sipd-lbl2");
   (a && (a.textContent = e), o && (o.textContent = t));
 }
-function z() {
+function B() {
   var n = localStorage.getItem(e),
     i = localStorage.getItem(t),
     a = n && i,
@@ -1055,8 +1041,8 @@ function z() {
     (d.style.cursor = o ? "pointer" : "not-allowed"),
     (d.style.background = "#ef4444"));
 }
-var L = "";
-function A() {
+var A = "";
+function O() {
   g()
     ? ((function () {
         if (!document.getElementById("sipd-tog")) {
@@ -1095,8 +1081,8 @@ function A() {
             u = e ? "#2e1065" : "#eef2ff",
             g = e ? "#818cf8" : "#4f46e5",
             f = "#2563eb",
-            b = "#1d4ed8",
-            m = "#059669",
+            m = "#1d4ed8",
+            b = "#059669",
             x = e ? "#1e3a5f" : "#eff6ff",
             h = e
               ? "inset 0 0 0 1px rgba(96, 165, 250, 0.2)"
@@ -1127,7 +1113,7 @@ function A() {
               ';padding:3px;line-height:1;border-radius:5px;display:none;align-items:center;justify-content:center;transition:background 0.2s,color 0.2s;">&#x2699;</button><button id="sipd-close-pn" style="background:none;border:none;cursor:pointer;font-size:16px;color:' +
               d +
               ';padding:1px 5px;line-height:1;border-radius:5px;transition:background 0.2s,color 0.2s;">&times;</button></div></div>',
-            k =
+            v =
               '<div style="display:flex;flex-direction:column;gap:6px;padding:10px 14px;box-sizing:border-box;"><div style="display:flex;align-items:center;justify-content:space-between;background:' +
               a +
               ";border:1px solid " +
@@ -1153,15 +1139,15 @@ function A() {
               ';overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">-</span></div><button id="sipd-btn-scan-b" style="padding:5px 10px;background:' +
               f +
               ';color:white;border:none;border-radius:5px;font-weight:600;cursor:pointer;font-size:10px;line-height:1.4;box-shadow:0 1px 2px 0 rgba(0,0,0,0.05);transition:background 0.15s,transform 0.1s;white-space:nowrap;">Ambil Data</button></div><button id="sipd-btn-cmp" disabled style="width:100%;padding:6px 12px;background:' +
-              m +
+              b +
               ';color:white;border:none;border-radius:5px;font-weight:600;cursor:not-allowed;font-size:11px;line-height:1.4;transition:background 0.15s,transform 0.1s;box-shadow:0 1px 2px 0 rgba(0,0,0,0.05);text-align:center;box-sizing:border-box;opacity:0.5;">Bandingkan Data</button><button id="sipd-btn-clear" disabled style="width:100%;padding:6px 12px;background:#ef4444;color:white;border:none;border-radius:5px;font-weight:600;cursor:not-allowed;font-size:11px;line-height:1.4;transition:background 0.15s,transform 0.1s;box-shadow:0 1px 2px 0 rgba(0,0,0,0.05);text-align:center;box-sizing:border-box;opacity:0.5;">Clear Data</button></div>';
-          ((t.innerHTML = y + k), document.body.appendChild(t));
-          var E = document.getElementById("sipd-btn-settings");
-          (E.addEventListener("mouseenter", function () {
+          ((t.innerHTML = y + v), document.body.appendChild(t));
+          var w = document.getElementById("sipd-btn-settings");
+          (w.addEventListener("mouseenter", function () {
             ((this.style.background = e ? "#1e293b" : "#f1f5f9"),
               (this.style.color = e ? "#f1f5f9" : "#0f172a"));
           }),
-            E.addEventListener("mouseleave", function () {
+            w.addEventListener("mouseleave", function () {
               ((this.style.background = "none"), (this.style.color = d));
             }));
           var _ = document.getElementById("sipd-close-pn");
@@ -1172,15 +1158,30 @@ function A() {
             _.addEventListener("mouseleave", function () {
               ((this.style.background = "none"), (this.style.color = d));
             }),
-            A("sipd-btn-scan-a", b, f),
-            A("sipd-btn-scan-b", b, f));
-          var S = document.getElementById("sipd-btn-cmp");
-          S &&
-            (S.addEventListener("mouseenter", function () {
+            z("sipd-btn-scan-a", m, f),
+            z("sipd-btn-scan-b", m, f));
+          var I = document.getElementById("sipd-btn-cmp");
+          I &&
+            (I.addEventListener("mouseenter", function () {
               this.disabled || (this.style.background = "#047857");
             }),
+            I.addEventListener("mouseleave", function () {
+              ((this.style.background = b),
+                (this.style.transform = "scale(1)"));
+            }),
+            I.addEventListener("mousedown", function () {
+              this.disabled || (this.style.transform = "scale(0.98)");
+            }),
+            I.addEventListener("mouseup", function () {
+              this.style.transform = "scale(1)";
+            }));
+          var S = document.getElementById("sipd-btn-clear");
+          (S &&
+            (S.addEventListener("mouseenter", function () {
+              this.disabled || (this.style.background = "#dc2626");
+            }),
             S.addEventListener("mouseleave", function () {
-              ((this.style.background = m),
+              ((this.style.background = "#ef4444"),
                 (this.style.transform = "scale(1)"));
             }),
             S.addEventListener("mousedown", function () {
@@ -1188,47 +1189,32 @@ function A() {
             }),
             S.addEventListener("mouseup", function () {
               this.style.transform = "scale(1)";
-            }));
-          var L = document.getElementById("sipd-btn-clear");
-          (L &&
-            (L.addEventListener("mouseenter", function () {
-              this.disabled || (this.style.background = "#dc2626");
-            }),
-            L.addEventListener("mouseleave", function () {
-              ((this.style.background = "#ef4444"),
-                (this.style.transform = "scale(1)"));
-            }),
-            L.addEventListener("mousedown", function () {
-              this.disabled || (this.style.transform = "scale(0.98)");
-            }),
-            L.addEventListener("mouseup", function () {
-              this.style.transform = "scale(1)";
             })),
             document
               .getElementById("sipd-btn-scan-a")
               .addEventListener("click", function () {
-                v("A");
+                k("A");
               }),
             document
               .getElementById("sipd-btn-scan-b")
               .addEventListener("click", function () {
-                v("B");
+                k("B");
               }),
             document
               .getElementById("sipd-btn-cmp")
-              .addEventListener("click", w),
+              .addEventListener("click", E),
             document
               .getElementById("sipd-btn-clear")
-              .addEventListener("click", I),
+              .addEventListener("click", T),
             document
               .getElementById("sipd-close-pn")
               .addEventListener("click", function () {
                 document.getElementById("sipd-panel").style.display = "none";
               }),
-            T(),
-            z());
+            L(),
+            B());
         }
-        function A(e, t, n) {
+        function z(e, t, n) {
           var i = document.getElementById(e);
           i &&
             (i.addEventListener("mouseenter", function () {
@@ -1246,8 +1232,8 @@ function A() {
             }));
         }
       })(),
-      T(),
-      z())
+      L(),
+      B())
     : (function () {
         var e = document.getElementById("sipd-tog");
         e && e.remove();
@@ -1255,18 +1241,18 @@ function A() {
         t && t.remove();
       })();
 }
-function B() {
-  (A(),
-    (L = window.location.pathname),
+function C() {
+  (O(),
+    (A = window.location.pathname),
     setInterval(function () {
-      window.location.pathname !== L && ((L = window.location.pathname), A());
+      window.location.pathname !== A && ((A = window.location.pathname), O());
     }, 500),
     window.addEventListener("popstate", function () {
-      ((L = window.location.pathname), setTimeout(A, 100));
+      ((A = window.location.pathname), setTimeout(O, 100));
     }),
     h(),
     setInterval(h, 3e4));
 }
 "loading" === document.readyState
-  ? document.addEventListener("DOMContentLoaded", B)
-  : B();
+  ? document.addEventListener("DOMContentLoaded", C)
+  : C();
